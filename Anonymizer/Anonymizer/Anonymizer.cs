@@ -19,7 +19,8 @@ namespace Anonymizer
         private readonly IPluralize _pluralizer;
         private Pipeline? _nlp;
         private Dictionary<string, string> _genderMap;
-        Dictionary<string, string> _auxVerbs = new Dictionary<string, string>
+        private Dictionary<string, List<string>> _alternateFirstNames;
+        private Dictionary<string, string> _auxVerbs = new Dictionary<string, string>
         {
             // singular , plural form
             { "is", "are" },
@@ -32,6 +33,7 @@ namespace Anonymizer
         {
             _pluralizer = new Pluralizer();
             _genderMap = new Dictionary<string,string>();
+            _alternateFirstNames = new Dictionary<string, List<string>>();
                 
             // Initialize Catalyst NLP
             InitializeNLP().GetAwaiter().GetResult();
@@ -47,6 +49,18 @@ namespace Anonymizer
 
                 if (word.GenderMap != null && !_genderMap.ContainsKey(key))
                     _genderMap.Add(key, value);
+            }
+
+            var nameData = File.ReadAllLines(Path.Combine(@".\Data", "variants.csv"));
+
+            foreach (var line in nameData)
+            {
+                var names = line.Split(",").Select(n => n.ToLower()).ToList();
+
+                if (names.Count > 0 && !_alternateFirstNames.ContainsKey(names[0]))
+                {
+                    _alternateFirstNames[names[0]] = names;
+                }
             }
         }
 
@@ -193,8 +207,28 @@ namespace Anonymizer
         {
             doc.Body = doc.Body.Replace('’', '\'');
             doc.Body = Regex.Replace(doc.Body, "[Mm](r|s|iss)\\.?\\s+" + doc.LastName, "Mx. " + doc.LastName);
-            doc.Body = Regex.Replace(doc.Body, "[Mm](r|s|iss)\\.?\\s+" + doc.FirstName, "Mx. " + doc.FirstName);
 
+            var names = GetFirstNames(doc.FirstName);
+            foreach (var firstName in names)
+            {
+                var firstNameProper = MatchCase(doc.FirstName, firstName);
+                doc.Body = Regex.Replace(doc.Body, "[Mm](r|s|iss)\\.?\\s+" + firstName, "Mx. " + firstNameProper);
+                doc.Body = Regex.Replace(doc.Body, "[Mm](r|s|iss)\\.?\\s+" + firstNameProper, "Mx. " + firstNameProper);
+
+            }
+
+        }
+
+        private List<string> GetFirstNames(string firstName)
+        {
+            var names = new List<string>();
+            names.Add(firstName.ToLower());
+            if (_alternateFirstNames.ContainsKey(names[0]))
+            {
+                names.AddRange(_alternateFirstNames[names[0]]);
+            }
+
+            return names;
         }
 
         private string Pluralize(IToken input)
@@ -212,14 +246,6 @@ namespace Anonymizer
             {
                 return input.Value;
             }
-
-
-            /*
-            else if (input.Value.StartsWith(input.Lemma) && pluralizer.IsPlural(input.Value))
-               return pluralizer.Singularize(input.Value);
-            else
-                return pluralizer.Pluralize(input.Value);
-            */
         }
 
         private void RewriteToken(List<IToken> tokens, IToken find, string newValue)
@@ -251,12 +277,12 @@ namespace Anonymizer
 
                 case PartOfSpeech.PROPN:
 
-                    if (tokval == doc.FirstName.ToLower())
-                        token.Replacement = "Student";
+                    var names = GetFirstNames(doc.FirstName);
 
+                    if (names.Contains(tokval))
+                        token.Replacement = "Student";
                     else if (tokval == doc.LastName.ToLower())
                         token.Replacement = "Candidate";
-
                     else if (tokval == doc.MiddleName.ToLower())
                         token.Replacement = "";
 
@@ -266,11 +292,14 @@ namespace Anonymizer
 
                     // Unknown POS if we land here
 
-                    if (tokval == doc.FirstName.ToLower())
-                        token.Replacement = "Student";
+                    names = GetFirstNames(doc.FirstName);
 
+                    if (names.Contains(tokval))
+                        token.Replacement = "Student";
                     else if (tokval == doc.LastName.ToLower())
                         token.Replacement = "Candidate";
+                    else if (tokval == doc.MiddleName.ToLower())
+                        token.Replacement = "";
 
                     break;
 

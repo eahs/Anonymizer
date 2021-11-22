@@ -16,7 +16,7 @@ public class Program
     {
         Anonymizer anonymizer = new Anonymizer();
 
-        string text = File.ReadAllText("Letter9.txt"); //"His family is here. He himself owns his car, which is red. That car is his to do with what he pleases. That is his car.";
+        string text = File.ReadAllText("Letter0.txt"); //"His family is here. He himself owns his car, which is red. That car is his to do with what he pleases. That is his car.";
         string first = "Alex", last = "Bloom", middle = "Adel";
 
         var doc = anonymizer.ProcessRecommendation(text, first, last, middle);
