@@ -40,8 +40,8 @@ public class Program
         nlp.Add(possessivePattern);
         nlp.Add(sheIsPattern);
 
-        string text = File.ReadAllText("Letter4.txt"); //"His family is here. He himself owns his car, which is red. That car is his to do with what he pleases. That is his car.";
-        string first = "Sara", last = "Stewart";
+        string text = File.ReadAllText("General.txt"); //"His family is here. He himself owns his car, which is red. That car is his to do with what he pleases. That is his car.";
+        string first = "Joe", last = "Bloom";
 
         text = Sanitize(text, first, last);
 
@@ -104,16 +104,18 @@ public class Program
             {
                 ProcessToken(tokens[index], first, last);
 
-                if (index < tokens.Count - 2)
+                if (index > 0)
                 {
-                    int diff = tokens[index + 1].Begin - tokens[index].End;
-                    if (diff == 0)  
+                    string quoteCheck = text.Substring(tokens[index].End-1, 1);
+
+                    if (quoteCheck == "'" && tokens[index-1].Replacement is not null && tokens[index-1].Replacement != "Student")
                         accum = " ";
                 }
 
                 output.Add(accum);
                 output.Add(tokens[index].Replacement ?? tokens[index].Value);
                 accum = "";
+
                 i += tokens[index].Length - 1;
                 index++;
             }
@@ -133,15 +135,26 @@ public class Program
         {
             // singular , plural form
             { "is", "are" },
-            { "has", "have" }
+            { "has", "have" },
+            { "was", "were" }
         };
 
         if (verbs.ContainsKey(input.Value.ToLower()))
         {
             return MatchCase(input.Value, verbs[input.Value.ToLower()]);
         }
+        else
+        {
+            return input.Value;
+        }
 
-        return pluralizer.Singularize(input.Value);
+
+        /*
+        else if (input.Value.StartsWith(input.Lemma) && pluralizer.IsPlural(input.Value))
+           return pluralizer.Singularize(input.Value);
+        else
+            return pluralizer.Pluralize(input.Value);
+        */
     }
 
     static void RewriteToken(List<IToken> tokens, IToken find, string newValue)
