@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization; 
-namespace Anonymizer{ 
+namespace TextUtils{ 
 
     public class GenderWord
     {

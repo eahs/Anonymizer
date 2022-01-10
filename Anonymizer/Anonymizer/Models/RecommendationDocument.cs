@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Catalyst;
 
-namespace Anonymizer.Models
+namespace TextUtils.Models
 {
     public class RecommendationDocument
     {

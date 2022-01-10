@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Anonymizer.Models;
 using Catalyst;
 using Catalyst.Models;
 using Mosaik.Core;
 using Pluralize.NET;
 using P = Catalyst.PatternUnitPrototype;
 using System.Text.Json;
+using TextUtils.Models;
 
-namespace Anonymizer
+namespace TextUtils
 {
     public class Anonymizer
     {
@@ -38,7 +38,7 @@ namespace Anonymizer
             // Initialize Catalyst NLP
             InitializeNLP().GetAwaiter().GetResult();
 
-            var wordData = File.ReadAllText(Path.Combine(@".\Data", "gendered_words.json"));
+            var wordData = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, @".\Data", "gendered_words.json"));
             var words = JsonSerializer.Deserialize<List<GenderWord>>(wordData).Where(x => x.Gender != "n").ToList();
 
             foreach (var word in words)
@@ -51,7 +51,7 @@ namespace Anonymizer
                     _genderMap.Add(key, value);
             }
 
-            var nameData = File.ReadAllLines(Path.Combine(@".\Data", "variants.csv"));
+            var nameData = File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, @".\Data", "variants.csv"));
 
             foreach (var line in nameData)
             {

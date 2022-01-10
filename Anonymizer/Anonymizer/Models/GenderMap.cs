@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization; 
 using System.Collections.Generic; 
-namespace Anonymizer{ 
+namespace TextUtils{ 
 
     public class GenderMap
     {

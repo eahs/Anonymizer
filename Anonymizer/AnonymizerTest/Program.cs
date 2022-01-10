@@ -1,17 +1,9 @@
-﻿using Catalyst;
-using Catalyst.Models;
-using Mosaik.Core;
-using System.Text.RegularExpressions;
-using Humanizer;
-using P = Catalyst.PatternUnitPrototype;
-using Pluralize.NET;
+﻿using TextUtils;
 
-namespace Anonymizer;
+namespace AnonymizerTest;
 
 public class Program
 {
-    static IPluralize pluralizer = new Pluralizer();
-
     static async Task Main(string[] args)
     {
         Anonymizer anonymizer = new Anonymizer();
@@ -23,18 +15,16 @@ public class Program
 
         Console.WriteLine(doc.AnonymousBody);
         Console.WriteLine();
-        
+
         //Console.WriteLine(doc.Document.ToJson());
-        
+
         //Console.WriteLine("chooses -> " + "chooses".Pluralize(inputIsKnownToBeSingular: false));
         //IPluralize pluralizer = new Pluralizer();
 
         //Console.WriteLine("explained -> " + pluralizer.Pluralize("chooses"));
 
-//        Console.WriteLine(Anonymize(doc, text, first, last));
+        //        Console.WriteLine(Anonymize(doc, text, first, last));
 
     }
-    
+
 }
-
-
