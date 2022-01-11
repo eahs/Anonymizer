@@ -38,7 +38,7 @@ namespace TextUtils
             // Initialize Catalyst NLP
             InitializeNLP().GetAwaiter().GetResult();
 
-            var wordData = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, @".\Data", "gendered_words.json"));
+            var wordData = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, @"Data", "gendered_words.json"));
             var words = JsonSerializer.Deserialize<List<GenderWord>>(wordData).Where(x => x.Gender != "n").ToList();
 
             foreach (var word in words)
@@ -51,7 +51,7 @@ namespace TextUtils
                     _genderMap.Add(key, value);
             }
 
-            var nameData = File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, @".\Data", "variants.csv"));
+            var nameData = File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, @"Data", "variants.csv"));
 
             foreach (var line in nameData)
             {
