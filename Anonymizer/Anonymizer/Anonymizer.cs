@@ -66,6 +66,8 @@ namespace TextUtils
 
         public RecommendationDocument ProcessRecommendation(string recommendation, string firstName, string lastName, string middleName = "")
         {
+            recommendation = recommendation.Replace("\t", "    ");
+
             RecommendationDocument doc = new RecommendationDocument
             {
                 Body = recommendation,
