@@ -207,6 +207,7 @@ namespace TextUtils
 
         private void Sanitize(RecommendationDocument doc)
         {
+            doc.Body = doc.Body.Replace("\t", "    ");
             doc.Body = doc.Body.Replace('’', '\'');
             doc.Body = Regex.Replace(doc.Body, "[Mm](r|s|iss)\\.?\\s+" + doc.LastName, "Mx. " + doc.LastName);
 
@@ -323,6 +324,10 @@ namespace TextUtils
             if (_genderMap.ContainsKey(tokval) && token.POS != PartOfSpeech.PROPN && token.Replacement == null)
             {
                 token.Replacement = MatchCase(token.Value, _genderMap[tokval]);
+            }
+            else if (tokval == "man" || tokval == "woman")
+            {
+                token.Replacement = MatchCase(token.Value, "person");
             }
         }
 
