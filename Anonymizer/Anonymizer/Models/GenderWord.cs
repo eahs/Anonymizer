@@ -1,5 +1,6 @@
-using System.Text.Json.Serialization; 
-namespace TextUtils{ 
+using System.Text.Json.Serialization;
+namespace TextUtils
+{
 
     public class GenderWord
     {

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Catalyst;
+﻿using Catalyst;
 using Catalyst.Models;
 using Mosaik.Core;
 using Pluralize.NET;
-using P = Catalyst.PatternUnitPrototype;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using TextUtils.Models;
 
 namespace TextUtils
@@ -32,9 +26,9 @@ namespace TextUtils
         public Anonymizer()
         {
             _pluralizer = new Pluralizer();
-            _genderMap = new Dictionary<string,string>();
+            _genderMap = new Dictionary<string, string>();
             _alternateFirstNames = new Dictionary<string, List<string>>();
-                
+
             // Initialize Catalyst NLP
             InitializeNLP().GetAwaiter().GetResult();
 
@@ -117,7 +111,7 @@ namespace TextUtils
 
                     case "AuxShe":
                         verb = entities[i].Children.First();
-                        
+
                         if (_auxVerbs.ContainsKey(verb.Value.ToLower()))
                             RewriteToken(tokens, verb, _auxVerbs[verb.Value.ToLower()]);
 
